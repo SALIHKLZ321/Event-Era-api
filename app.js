@@ -10,16 +10,10 @@ import adminRoute from './routes/admin.js';
 
 const app = express();
 dotenv.config()
-const database = process.env.DBL;
-mongoose.set('strictQuery', false);
-mongoose
-  .connect(database)
-  .then(() => {
-    console.log('mongoose connected');
-  })
-  .catch((err) => {
-    console.log('mongoose connection failed: ', err);
-  });
+const database = process.env.MONGO_URI
+mongoose.connect(database, { useUnifiedTopology: true, useNewUrlParser: true })
+  .then(() => console.log('DB connected'))
+  .catch((err) => console.log(err));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use((req, res, next) => {

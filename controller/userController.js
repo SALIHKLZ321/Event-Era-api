@@ -1,9 +1,11 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/extensions */
 /* eslint-disable new-cap */
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import userModel from '../model/userModel.js';
 import bookingModel from '../model/bookingModel.js';
+import eventModel from '../model/eventModel.js';
 
 const userRegister = async (req, res) => {
   const emailExist = await userModel.findOne({ email: req.body.email });
@@ -66,14 +68,46 @@ const fetchProfile = async (req, res) => {
   const { userId } = req.user;
   const user = await userModel.findOne({ _id: userId });
   const tickets = await bookingModel.find({ user: userId }).populate('event');
-  console.log(tickets);
   return res.json({
     user, tickets,
   });
+};
+const cancelTicket = async (req, res) => {
+  const { userId } = req.user;
+  const { id } = req.body;
+  try {
+    const ticket = await bookingModel.findOne({ _id: id }).populate('event');
+    const now = new Date();
+    if (ticket.event.date > now) {
+      await bookingModel.updateOne({ _id: id }, { $set: { status: 'Cancelled' } })
+        .then(async () => {
+          await userModel.updateOne({ _id: userId }, { $inc: { wallet: ticket.total } })
+            .then(async () => {
+              await eventModel.updateOne(
+                {
+                  _id: ticket.event._id,
+                },
+                { $inc: { sold: ticket.quantity, slots: -ticket.quantity } },
+              );
+              res.status(201).json({
+                status: true,
+              });
+            });
+        });
+    } else {
+      return res.json({
+        status: false,
+        message: 'expired',
+      });
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 export {
   userRegister,
   userLogin,
   fetchProfile,
+  cancelTicket,
 };

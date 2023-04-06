@@ -10,7 +10,9 @@ import {
 import {
   allEvents, vendorEventsId, eventDetail, bookingDetails, bookTicket, fetctFirstUpcomingEvent,
 } from '../controller/eventHelper.js';
-import { fetchProfile, userLogin, userRegister } from '../controller/userController.js'
+import {
+  fetchProfile, userLogin, userRegister, cancelTicket,
+} from '../controller/userController.js'
 
 import { userAuth } from '../middleware/authCheck.js';
 
@@ -31,5 +33,6 @@ router.post('/sign-in', userLogin);
 router.post('/connect-vendor', userAuth, createConnection);
 router.post('/send-message', userAuth, saveMessage);
 router.post('/book-ticket', userAuth, bookTicket);
+router.post('/cancel-ticket', userAuth, cancelTicket)
 
 export default router;

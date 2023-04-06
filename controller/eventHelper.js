@@ -82,7 +82,7 @@ const bookTicket = async (req, res) => {
   await eventSchema.updateOne(
     { _id: event },
     {
-      $inc: { sold: 1, slots: -1 },
+      $inc: { sold: quantity, slots: -quantity },
     },
   );
   return res.json({

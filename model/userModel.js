@@ -24,6 +24,10 @@ const userSchema = mongoose.Schema({
   image: {
     type: String,
   },
+  wallet: {
+    type: Number,
+    default: 0,
+  },
 
 });
 export default mongoose.model('User', userSchema);
