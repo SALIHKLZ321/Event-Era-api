@@ -1,0 +1,12 @@
+POST http://localhost:3000/user/sign-up HTTP/1.1
+Content-Type: application/json
+
+{
+    "mane":"mishal"
+}
+
+###
+GET http://localhost:3000/user/sign-up HTTP/1.1
+
+###
+GET http://localhost:3000/hello HTTP/1.1
